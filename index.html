@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>LEXCORA | Legal Enterprise Resource Planning</title>
+    <meta name="title" content="LEXCORA | Premier UAE Legal ERP System" />
+    <meta name="description" content="LEXCORA is the definitive UAE Law Firm ERP. Enhance productivity, client experience, and governance for high-net-worth legal practices in Dubai and Abu Dhabi." />
+    <meta name="keywords" content="UAE Legal ERP, Law Firm Software Dubai, Case Management System UAE, Legal Tech Abu Dhabi, Law Practice Management, LEXCORA, Arabic Legal Software, Bilingual Legal ERP" />
+    <meta name="author" content="ALMSTKSHF Co." />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lexcora.ae/" />
+    <meta property="og:title" content="LEXCORA | Premier UAE Legal ERP System" />
+    <meta property="og:description" content="Streamline your law firm with LEXCORA. The all-in-one ERP for case management, client portals, and governance designed specifically for the UAE legal market." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=1200&h=630" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://lexcora.ae/" />
+    <meta property="twitter:title" content="LEXCORA | UAE Law Firm ERP" />
+    <meta property="twitter:description" content="The definitive Enterprise Resource Planning suite for UAE legal professionals. Secure, Bilingual, Compliant." />
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=1200&h=630" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              lexcora: {
+                blue: '#0F172A', // Deep Blue (Slate 900 base)
+                gold: '#D4AF37', // Metallic Gold
+                goldLight: '#F3E5AB',
+                charcoal: '#36454F',
+                paper: '#F8FAFC',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'Cairo', 'sans-serif'],
+              serif: ['Playfair Display', 'Times New Roman', 'serif'],
+              arabic: ['Cairo', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.8s ease-out forwards',
+              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Smooth scrolling */
+      html { scroll-behavior: smooth; }
+      /* Custom scrollbar for premium feel */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #0F172A; }
+      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-50 text-slate-800 antialiased selection:bg-lexcora-gold selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
