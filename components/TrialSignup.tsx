@@ -3,6 +3,7 @@ import { Language } from '../types';
 import { CONTENT } from '../constants';
 import { Check, CheckCircle2, ChevronRight, ChevronLeft, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from './Button';
+import { off } from 'process';
 
 interface TrialSignupProps {
   lang: Language;
@@ -17,7 +18,9 @@ export const TrialSignup: React.FC<TrialSignupProps> = ({ lang }) => {
     email: '',
     phone: '',
     firmName: '',
-    firmSize: ''
+    firmSize: '',
+    officeLocation: '',
+  
   });
 
   const handleNext = () => {
