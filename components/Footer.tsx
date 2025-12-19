@@ -12,14 +12,42 @@ export const Footer: React.FC<FooterProps> = ({ lang, onNavigate }) => {
   const t = CONTENT[lang].footer;
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      // Mock subscription logic
-      setSubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubscribed(false), 3000);
+    if (!email) return;
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://dev.almstkshf.com';
+      const response = await fetch(`${apiUrl}/api/newsletter/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubscribed(true);
+        setEmail('');
+        setTimeout(() => setSubscribed(false), 5000);
+      } else {
+        setError(data.message || 'Subscription failed. Please try again.');
+        setTimeout(() => setError(''), 5000);
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      setError('Network error. Please try again later.');
+      setTimeout(() => setError(''), 5000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -44,23 +72,51 @@ export const Footer: React.FC<FooterProps> = ({ lang, onNavigate }) => {
                 <CheckCircle2 size={20} />
                 <span className="font-semibold">{t.newsletter.success}</span>
               </div>
+            ) : error ? (
+              <div className="mb-3">
+                <div className="flex items-center gap-2 text-red-400 bg-red-500/10 p-4 rounded-lg border border-red-500/20 mb-3" role="alert">
+                  <span className="text-sm">{error}</span>
+                </div>
+                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
+                  <input 
+                    type="email" 
+                    placeholder={t.newsletter.placeholder}
+                    className="flex-1 bg-slate-900/50 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-lexcora-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    aria-label={t.newsletter.placeholder}
+                  />
+                  <button 
+                    type="submit" 
+                    className="bg-lexcora-gold text-lexcora-blue font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label={t.newsletter.button}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Subscribing...' : t.newsletter.button} {!isLoading && <Send size={18} />}
+                  </button>
+                </form>
+              </div>
             ) : (
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
                 <input 
                   type="email" 
                   placeholder={t.newsletter.placeholder}
-                  className="flex-1 bg-slate-900/50 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-lexcora-gold transition-colors"
+                  className="flex-1 bg-slate-900/50 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-lexcora-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isLoading}
                   aria-label={t.newsletter.placeholder}
                 />
                 <button 
                   type="submit" 
-                  className="bg-lexcora-gold text-lexcora-blue font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                  className="bg-lexcora-gold text-lexcora-blue font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label={t.newsletter.button}
+                  disabled={isLoading}
                 >
-                  {t.newsletter.button} <Send size={18} />
+                  {isLoading ? 'Subscribing...' : t.newsletter.button} {!isLoading && <Send size={18} />}
                 </button>
               </form>
             )}

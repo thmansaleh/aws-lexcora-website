@@ -168,6 +168,8 @@ export const CONTENT: Record<'en' | 'ar', ContentDictionary> = {
           priceAnnually: "1,990",
           periodLabel: "AED / user",
           minUsers: "Minimum: 2 Users",
+          stripePriceIdMonthly: "price_starter_monthly",
+          stripePriceIdAnnually: "price_starter_annually",
           features: [
             "Case and File Management (Unlimited)",
             "Client and Opponent Management",
@@ -190,6 +192,8 @@ export const CONTENT: Record<'en' | 'ar', ContentDictionary> = {
           periodLabel: "AED / user",
           minUsers: "Minimum: 4 Users",
           highlight: true,
+          stripePriceIdMonthly: "price_1SfiJHAU51ThZ996OW9wM5Zu",
+          stripePriceIdAnnually: "price_1SfiIhAU51ThZ996qwwlkPgm",
           features: [
             "All Features from STARTER",
             "AI-powered intelligent legal assistant (200 queries)",
@@ -212,6 +216,8 @@ export const CONTENT: Record<'en' | 'ar', ContentDictionary> = {
           priceAnnually: "Custom",
           periodLabel: "Starting from AED / user",
           minUsers: "Minimum: 20 Users",
+          stripePriceIdMonthly: "price_enterprise_monthly",
+          stripePriceIdAnnually: "price_enterprise_annually",
           features: [
             "All Features from PROFESSIONAL",
             "Unlimited AI-powered intelligent assistant",
@@ -695,6 +701,8 @@ export const CONTENT: Record<'en' | 'ar', ContentDictionary> = {
           priceAnnually: "١,٩٩٠",
           periodLabel: "درهم / مستخدم",
           minUsers: "الحد الأدنى: ٢ مستخدمين",
+          stripePriceIdMonthly: "price_starter_monthly",
+          stripePriceIdAnnually: "price_starter_annually",
           features: [
             "إدارة القضايا والملفات (غير محدود)",
             "إدارة العملاء والخصوم",
@@ -717,6 +725,8 @@ export const CONTENT: Record<'en' | 'ar', ContentDictionary> = {
           periodLabel: "درهم / مستخدم",
           minUsers: "الحد الأدنى: ٤ مستخدمين",
           highlight: true,
+          stripePriceIdMonthly: "price_1SfiJHAU51ThZ996OW9wM5Zu",
+          stripePriceIdAnnually: "price_1SfiIhAU51ThZ996qwwlkPgm",
           features: [
             "كل ميزات الباقة الأساسية",
             "مساعد قانوني ذكي (٢٠٠ استعلام)",
@@ -739,6 +749,8 @@ export const CONTENT: Record<'en' | 'ar', ContentDictionary> = {
           priceAnnually: "مخصص",
           periodLabel: "يبدأ من درهم / مستخدم",
           minUsers: "الحد الأدنى: ٢٠ مستخدم",
+          stripePriceIdMonthly: "price_enterprise_monthly",
+          stripePriceIdAnnually: "price_enterprise_annually",
           features: [
             "كل ميزات الباقة الاحترافية",
             "مساعد ذكي غير محدود",

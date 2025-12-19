@@ -3,7 +3,6 @@ import { X, CreditCard, Lock, CheckCircle2, ShieldCheck, Loader2, Mail, Phone, U
 import { Button } from './Button';
 import { Language, PricingTier } from '../types';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 // Initialize Stripe (replace with your publishable key)
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_key_here');
@@ -26,105 +25,103 @@ interface ContactInfo {
 
 const PaymentForm: React.FC<{
   lang: Language;
-  onSuccess: () => void;
   contactInfo: ContactInfo;
   tier: PricingTier;
   billingCycle: 'monthly' | 'annually';
-}> = ({ lang, onSuccess, contactInfo, tier, billingCycle }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+}> = ({ lang, contactInfo, tier, billingCycle }) => {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const price = billingCycle === 'annually' ? tier.priceAnnually : tier.priceMonthly;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!stripe || !elements) {
-      return;
-    }
-
+  const handleCheckout = async () => {
     setProcessing(true);
     setError(null);
 
     try {
-      const cardElement = elements.getElement(CardElement);
-      
-      if (!cardElement) {
-        throw new Error('Card element not found');
-      }
-
-      // Create payment method
-      const { error: methodError, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: cardElement,
-        billing_details: {
-          name: contactInfo.name,
-          email: contactInfo.email,
-          phone: contactInfo.phone,
-        },
-      });
-
-      if (methodError) {
-        throw new Error(methodError.message);
-      }
-
-      // Call your backend to create subscription with Stripe
-      const response = await fetch('http://localhost:8080/api/create-subscription', {
+      // Call backend to create Stripe Checkout Session
+      const response = await fetch('http://localhost:8080/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          paymentMethodId: paymentMethod.id,
           email: contactInfo.email,
           name: contactInfo.name,
           phone: contactInfo.phone,
           tier: tier.name,
           billingCycle: billingCycle,
           priceId: billingCycle === 'annually' ? tier.stripePriceIdAnnually : tier.stripePriceIdMonthly,
+          successUrl: `${window.location.origin}?payment=success`,
+          cancelUrl: `${window.location.origin}?payment=cancel`,
         }),
       });
 
       const data = await response.json();
 
-      if (data.success) {
-        onSuccess();
+      if (data.success && data.sessionId) {
+        // Redirect to Stripe Checkout
+        const stripe = await stripePromise;
+        if (stripe) {
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: data.sessionId,
+          });
+          
+          if (error) {
+            throw new Error(error.message);
+          }
+        }
       } else {
-        throw new Error(data.message || 'Payment failed');
+        throw new Error(data.message || 'Failed to create checkout session');
       }
     } catch (err: any) {
       setError(err.message || 'Payment failed. Please try again.');
-      console.error('Payment error:', err);
+      console.error('Checkout error:', err);
     } finally {
       setProcessing(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-xs font-bold uppercase text-slate-500 mb-2">
-          {lang === 'en' ? 'Card Information' : 'معلومات البطاقة'}
-        </label>
-        <div className="p-4 bg-white border border-slate-200 rounded-lg">
-          <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: '16px',
-                  color: '#424770',
-                  '::placeholder': {
-                    color: '#aab7c4',
-                  },
-                },
-                invalid: {
-                  color: '#9e2146',
-                },
-              },
-            }}
-          />
+    <div className="space-y-6">
+      {/* Payment Summary */}
+      <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-sm text-slate-600 mb-1">
+              {lang === 'en' ? 'Total Amount' : 'المبلغ الإجمالي'}
+            </p>
+            <p className="text-3xl font-bold text-lexcora-blue">AED {price}</p>
+          </div>
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md">
+            <CreditCard className="text-lexcora-gold" size={28} />
+          </div>
+        </div>
+        <p className="text-xs text-slate-500">
+          {lang === 'en' 
+            ? `Billed ${billingCycle === 'annually' ? 'annually' : 'monthly'}` 
+            : `يتم الدفع ${billingCycle === 'annually' ? 'سنوياً' : 'شهرياً'}`}
+        </p>
+      </div>
+
+      {/* Payment Method Info */}
+      <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+        <p className="text-sm text-slate-700 mb-2 font-medium">
+          {lang === 'en' ? 'Accepted Payment Methods:' : 'طرق الدفع المقبولة:'}
+        </p>
+        <div className="flex gap-2 flex-wrap">
+          <span className="px-3 py-1 bg-white rounded-md text-xs font-medium text-slate-600 border border-slate-200">
+            Visa
+          </span>
+          <span className="px-3 py-1 bg-white rounded-md text-xs font-medium text-slate-600 border border-slate-200">
+            Mastercard
+          </span>
+          <span className="px-3 py-1 bg-white rounded-md text-xs font-medium text-slate-600 border border-slate-200">
+            Amex
+          </span>
+          <span className="px-3 py-1 bg-white rounded-md text-xs font-medium text-slate-600 border border-slate-200">
+            Apple Pay
+          </span>
         </div>
       </div>
 
@@ -134,21 +131,21 @@ const PaymentForm: React.FC<{
         </div>
       )}
 
-      <Button fullWidth disabled={!stripe || processing}>
+      <Button fullWidth onClick={handleCheckout} disabled={processing}>
         {processing ? (
-          <><Loader2 className="animate-spin" size={18} /> {lang === 'en' ? 'Processing...' : 'جار المعالجة...'}</>
+          <><Loader2 className="animate-spin" size={18} /> {lang === 'en' ? 'Redirecting...' : 'جار التحويل...'}</>
         ) : (
-          <>{lang === 'en' ? 'Pay & Subscribe' : 'دفع واشتراك'} AED {price} <ShieldCheck size={18} /></>
+          <>{lang === 'en' ? 'Continue to Payment' : 'متابعة إلى الدفع'} <ShieldCheck size={18} /></>
         )}
       </Button>
       
       <p className="text-[10px] text-center text-slate-400 flex items-center justify-center gap-1">
         <Lock size={10} /> 
         {lang === 'en' 
-          ? 'Secure payment powered by Stripe' 
-          : 'دفع آمن بواسطة Stripe'}
+          ? 'Secure payment powered by Stripe. You will be redirected to complete payment.' 
+          : 'دفع آمن بواسطة Stripe. سيتم تحويلك لإكمال عملية الدفع.'}
       </p>
-    </form>
+    </div>
   );
 };
 
@@ -424,15 +421,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, tie
               {/* Step 3: Payment with Stripe */}
               {step === 'payment' && (
                 <div className="animate-fade-in">
-                  <Elements stripe={stripePromise}>
-                    <PaymentForm 
-                      lang={lang}
-                      onSuccess={() => setStep('success')}
-                      contactInfo={contactInfo}
-                      tier={tier}
-                      billingCycle={billingCycle}
-                    />
-                  </Elements>
+                  <PaymentForm 
+                    lang={lang}
+                    contactInfo={contactInfo}
+                    tier={tier}
+                    billingCycle={billingCycle}
+                  />
                   
                   <button
                     onClick={() => setStep('otp')}

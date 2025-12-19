@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Loader2, Minimize2, Sparkles, ExternalLink, Trash2, Download, Copy, Check, Plus, RefreshCw } from 'lucide-react';
-import { LexCoraChatSession, Source, ChatMessage } from '../services/geminiService';
+import { BackendChatSession, Source, ChatMessage } from '../services/backendChatService';
 import { Language } from '../types';
 import { CONTENT } from '../constants';
 
@@ -15,7 +15,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ lang }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   
-  const chatSessionRef = useRef<LexCoraChatSession | null>(null);
+  const chatSessionRef = useRef<BackendChatSession | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const STORAGE_KEY = 'lexcora_chat_history';
   
@@ -40,7 +40,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ lang }) => {
     }
 
     setMessages(initialMessages);
-    chatSessionRef.current = new LexCoraChatSession(lang, initialMessages);
+    chatSessionRef.current = new BackendChatSession(lang, initialMessages);
   }, [lang]); // Re-init if language changes (though ideally we might want to clear history on lang change or keep separate)
 
   // Persist history whenever messages change
@@ -71,7 +71,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ lang }) => {
       }]);
     } else {
       // Fallback if ref is somehow null
-      chatSessionRef.current = new LexCoraChatSession(lang, messages);
+      chatSessionRef.current = new BackendChatSession(lang, messages);
       const response = await chatSessionRef.current.sendMessage(userMessage);
        setMessages(prev => [...prev, { 
         role: 'model', 
@@ -94,7 +94,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ lang }) => {
     const welcomeMsg: ChatMessage[] = [{ role: 'model', text: t.welcome }];
     setMessages(welcomeMsg);
     localStorage.removeItem(STORAGE_KEY);
-    chatSessionRef.current = new LexCoraChatSession(lang, []); // Reset session
+    chatSessionRef.current = new BackendChatSession(lang, []); // Reset session
   };
 
   const handleExport = () => {
@@ -143,7 +143,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ lang }) => {
               <h3 className="font-bold text-sm tracking-wide">{t.title}</h3>
               <div className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                <span className="text-[10px] text-slate-400">Online | Gemini 3 Pro</span>
+                <span className="text-[10px] text-slate-400">Online | Backend AI</span>
               </div>
             </div>
           </div>
